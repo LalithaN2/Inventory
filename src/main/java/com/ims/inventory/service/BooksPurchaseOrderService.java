@@ -1,14 +1,15 @@
 package com.ims.inventory.service;
 
-import java.text.DateFormat;
+import java.lang.invoke.MethodHandles;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,8 @@ import com.ims.inventory.repository.BooksPurchasesOrderHdrRepository;
 
 @Service
 public class BooksPurchaseOrderService{
-	
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+
 	@Autowired
 	BooksPurchasesOrderHdrRepository booksPurchasesOrderHdrRepository;	
 
@@ -34,6 +36,7 @@ public class BooksPurchaseOrderService{
 	BooksService booksService;
 	
 	public List<BooksPurchaseOrderHdr> getPurchaseOrderByCreateDt(String dateStr) throws ParseException {
+		logger.info("service: getPurchaseOrderByCreateDt");
 		Date purchaseOrderDate = null;
 		if(dateStr!=null){
 			SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd"); 
@@ -43,10 +46,12 @@ public class BooksPurchaseOrderService{
 	}
 	
 	public List<BooksPurchaseOrderHdr> getAllPurchaseOrder(){		
+		logger.info("service: getAllPurchaseOrder");		
 		return booksPurchasesOrderHdrRepository.findAll();		
 	}
 		
 	public BooksPurchaseOrderHdr saveBooksPurchaseOrder(Long supplierId,Set<BooksPurchaseOrderHolder> booksPurchaseOrderHolderSet) {
+		logger.info("service: saveBooksPurchaseOrder");
 		Set<BooksPurchaseOrderDtl> booksPurchaseOrderDtlSet=new HashSet<BooksPurchaseOrderDtl>();
 		
 		booksPurchaseOrderHolderSet.forEach(h->{
@@ -68,11 +73,8 @@ public class BooksPurchaseOrderService{
 		return booksPurchaseOrderHdr;
 	}
 	
-	public void deleteById(Long purchaseOrderId) {
-		booksPurchasesOrderHdrRepository.deleteById(purchaseOrderId);
-	}
-	
 	public BooksPurchaseOrderHdr updatePurchaseOrder(Long purchaseId,String status) {
+		logger.info("service: updatePurchaseOrder");		
 		BooksPurchaseOrderHdr booksPurchaseOrderHdr=booksPurchasesOrderHdrRepository.findById(purchaseId).get();
 		if(booksPurchaseOrderHdr!=null) {
 			if(booksPurchaseOrderHdr.getStatus().equals(BooksConstants.STATUS_NEW)) {		
