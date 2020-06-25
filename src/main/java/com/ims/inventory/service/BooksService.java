@@ -10,9 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ims.inventory.model.Book;
-import com.ims.inventory.model.BooksSupplier;
 import com.ims.inventory.repository.BooksRepository;
-import com.ims.inventory.repository.BooksSupplierRepository;
 
 @Service
 public class BooksService{

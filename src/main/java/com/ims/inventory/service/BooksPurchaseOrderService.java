@@ -20,6 +20,7 @@ import com.ims.inventory.model.BooksPurchaseOrderHdr;
 import com.ims.inventory.model.BooksPurchaseOrderHolder;
 import com.ims.inventory.model.BooksSupplier;
 import com.ims.inventory.repository.BooksPurchasesOrderHdrRepository;
+import com.ims.inventory.restClients.BooksSupplierClient;
 
 @Service
 public class BooksPurchaseOrderService{
@@ -30,7 +31,8 @@ public class BooksPurchaseOrderService{
 
 	
 	@Autowired
-	BooksSupplierService booksSupplierService;
+	BooksSupplierClient booksSupplierClient;
+
 
 	@Autowired
 	BooksService booksService;
@@ -63,7 +65,8 @@ public class BooksPurchaseOrderService{
      		booksPurchaseOrderDtlSet.add(dtl);
 		
 		});
-		BooksSupplier booksSupplier=booksSupplierService.getSupplierById(supplierId);
+		BooksSupplier booksSupplier=booksSupplierClient.getSupplierById(supplierId);
+		
 		BooksPurchaseOrderHdr booksPurchaseOrderHdr=new BooksPurchaseOrderHdr(booksPurchaseOrderDtlSet,booksSupplier);
 		booksPurchaseOrderHdr.getBooksPurchaseOrderDtlSet().forEach(
 				pod->{booksPurchaseOrderHdr.addPohId(pod);		                                                   
