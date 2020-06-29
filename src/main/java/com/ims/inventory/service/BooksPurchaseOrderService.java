@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ import com.ims.inventory.model.BooksPurchaseOrderHdr;
 import com.ims.inventory.model.BooksPurchaseOrderHolder;
 import com.ims.inventory.model.BooksSupplier;
 import com.ims.inventory.repository.BooksPurchasesOrderHdrRepository;
-import com.ims.inventory.restClients.BooksSupplierClient;
+import com.ims.inventory.restclients.BooksSupplierClient;
 
 @Service
 public class BooksPurchaseOrderService{
@@ -54,11 +55,11 @@ public class BooksPurchaseOrderService{
 		
 	public BooksPurchaseOrderHdr saveBooksPurchaseOrder(Long supplierId,Set<BooksPurchaseOrderHolder> booksPurchaseOrderHolderSet) {
 		logger.info("service: saveBooksPurchaseOrder");
-		Set<BooksPurchaseOrderDtl> booksPurchaseOrderDtlSet=new HashSet<BooksPurchaseOrderDtl>();
+		Set<BooksPurchaseOrderDtl> booksPurchaseOrderDtlSet=new HashSet<>();
 		
 		booksPurchaseOrderHolderSet.forEach(h->{
 			BooksPurchaseOrderDtl dtl=new BooksPurchaseOrderDtl();
-			Book book=booksService.getBookById(h.getBookId());
+			Book book=booksService.getBookById(h.getBookId()).get();
      		dtl.setBook(book);
      		dtl.setQuantity(h.getQuantity());
      		dtl.setUnitPrice(h.getUnitPrice());
@@ -69,8 +70,8 @@ public class BooksPurchaseOrderService{
 		
 		BooksPurchaseOrderHdr booksPurchaseOrderHdr=new BooksPurchaseOrderHdr(booksPurchaseOrderDtlSet,booksSupplier);
 		booksPurchaseOrderHdr.getBooksPurchaseOrderDtlSet().forEach(
-				pod->{booksPurchaseOrderHdr.addPohId(pod);		                                                   
-				System.out.println(pod.getQuantity());});		
+				pod->booksPurchaseOrderHdr.addPohId(pod)	                                                   
+				);		
 		booksPurchaseOrderHdr.setStatus(BooksConstants.STATUS_NEW);
 		booksPurchasesOrderHdrRepository.save(booksPurchaseOrderHdr);
 		return booksPurchaseOrderHdr;
@@ -78,25 +79,28 @@ public class BooksPurchaseOrderService{
 	
 	public BooksPurchaseOrderHdr updatePurchaseOrder(Long purchaseId,String status) {
 		logger.info("service: updatePurchaseOrder");		
-		BooksPurchaseOrderHdr booksPurchaseOrderHdr=booksPurchasesOrderHdrRepository.findById(purchaseId).get();
-		if(booksPurchaseOrderHdr!=null) {
+		BooksPurchaseOrderHdr booksPurchaseOrderHdr=new BooksPurchaseOrderHdr();
+		Optional<BooksPurchaseOrderHdr> booksPurchaseOrderHdrChk=booksPurchasesOrderHdrRepository.findById(purchaseId);
+		if(booksPurchaseOrderHdrChk.isPresent()) {
+			booksPurchaseOrderHdr=booksPurchaseOrderHdrChk.get();
 			if(booksPurchaseOrderHdr.getStatus().equals(BooksConstants.STATUS_NEW)) {		
 				booksPurchaseOrderHdr.setStatus(status);
 				if(status.equals(BooksConstants.STATUS_RECEIVED)) {
-					booksPurchaseOrderHdr.getBooksPurchaseOrderDtlSet().forEach(dtl->{
-						dtl.updateStock(status);
-					});
+					booksPurchaseOrderHdr.getBooksPurchaseOrderDtlSet().forEach(dtl->
+						dtl.updateStock(status)
+					);
 				}			
 			}else if(booksPurchaseOrderHdr.getStatus().equals(BooksConstants.STATUS_RECEIVED)) {
 				booksPurchaseOrderHdr.setStatus(status);
 				if(status.equals(BooksConstants.STATUS_CANCELLED)) {
-					booksPurchaseOrderHdr.getBooksPurchaseOrderDtlSet().forEach(dtl->{
-						dtl.updateStock(status);
-					});
+					booksPurchaseOrderHdr.getBooksPurchaseOrderDtlSet().forEach(dtl->
+						dtl.updateStock(status)
+					);
 				}
 			}
+			booksPurchasesOrderHdrRepository.save(booksPurchaseOrderHdr);
 		}
-		booksPurchasesOrderHdrRepository.save(booksPurchaseOrderHdr);
+				
 		return booksPurchaseOrderHdr;
 	}
 	

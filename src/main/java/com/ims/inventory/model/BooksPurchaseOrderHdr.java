@@ -7,21 +7,13 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "invt_purchase_order_hdr")
@@ -46,7 +38,7 @@ public class BooksPurchaseOrderHdr{
 	private BooksSupplier bookSupplier;
 	
 	@OneToMany(mappedBy="booksPurchaseOrderHdr", cascade=CascadeType.ALL) 	
-    private Set<BooksPurchaseOrderDtl> booksPurchaseOrderDtlSet=new HashSet<BooksPurchaseOrderDtl>();
+    private Set<BooksPurchaseOrderDtl> booksPurchaseOrderDtlSet=new HashSet<>();
 	
      public BooksPurchaseOrderHdr() {
 		super();
@@ -110,7 +102,7 @@ public class BooksPurchaseOrderHdr{
 	public void addPohId(BooksPurchaseOrderDtl getBooksPurchaseOrderDtl) {
 		if(getBooksPurchaseOrderDtl!=null) {
 			if(booksPurchaseOrderDtlSet==null) {
-				booksPurchaseOrderDtlSet=new  HashSet<BooksPurchaseOrderDtl>();
+				booksPurchaseOrderDtlSet=new  HashSet<>();
 			}
 			getBooksPurchaseOrderDtl.setBooksPurchaseOrderHdr(this);
 			booksPurchaseOrderDtlSet.add(getBooksPurchaseOrderDtl);

@@ -1,4 +1,4 @@
-package com.ims.inventory.restClients;
+package com.ims.inventory.restclients;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

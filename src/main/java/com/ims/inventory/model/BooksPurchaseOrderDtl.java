@@ -1,27 +1,19 @@
 package com.ims.inventory.model;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.ims.inventory.commons.BooksConstants;
 
 @Entity
@@ -33,9 +25,6 @@ public class BooksPurchaseOrderDtl{
 	@Column(name="invt_pod_id",nullable=false)
 	@JsonIgnore
 	private Long id;
-//	
-//	@Column(name="invt_poh_id",nullable=false)
-//	private Long pohId;	
 	
 	@Column(name="invt_pod_create_dt")
 	@JsonIgnore
@@ -128,12 +117,12 @@ public class BooksPurchaseOrderDtl{
 	}
 
 	public void updateStock(String status) {
-		if( status==BooksConstants.STATUS_RECEIVED) {
+		if( status.equals(BooksConstants.STATUS_RECEIVED)) {
 			book.setQuantity(book.getQuantity()+quantity);
 			if(book.getUnitPrice()<unitPrice) {
 				book.setUnitPrice(unitPrice);
 			}
-		}else if(status==BooksConstants.STATUS_CANCELLED) {
+		}else if(status.equals(BooksConstants.STATUS_CANCELLED)) {
 			book.setQuantity(book.getQuantity()-quantity);
 		}
 	}
